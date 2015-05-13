@@ -1,27 +1,25 @@
 package app;
 
-import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.geometry.Point2D;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+import javafx.scene.layout.GridPane;
+import library.GridPaneHelper;
+import app.line.LinePane;
 
-public final class MainPane extends AnchorPane {
+public final class MainPane extends GridPane {
+	private static final int LINE_COUNT = 4;
 
-	public MainPane(MoveListener listener) {
-		this.setPrefHeight(500);
-		this.setPrefWidth(500);
-
-		for (ObjectProperty<Point2D> point : listener.getPointList()) {
-			Circle circle = new Circle(15, Color.RED);
-			this.getChildren().add(circle);
-			point.addListener((observable, oldValue, newValue) -> {
-				Platform.runLater(() -> {
-					circle.setLayoutX(newValue.getX());
-					circle.setLayoutY(newValue.getY());
-				});
-			});
+	public MainPane() {
+		GridPaneHelper.initConstraints(this, LINE_COUNT, 1);
+		this.setGridLinesVisible(true);
+		for (int index = 0; index < LINE_COUNT; index++) {
+			LinePane linePane = new LinePane();
+			this.add(linePane, index, 0);
 		}
+//		
+//		CountUpTask task = new CountUpTask(1000, 1, 10);
+//		this.timingBar.translateYProperty().bind(task.progressProperty().multiply(this.heightProperty().multiply(0.8)));
+//		Executor executor = Executors.newSingleThreadExecutor();
+//		executor.execute(task);
+//		DataManager.frameProperty().addListener(
+//				(observable, oldValue, newValue) -> this.hoge(newValue));
 	}
 }

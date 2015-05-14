@@ -1,9 +1,14 @@
 package app.line;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
@@ -18,6 +23,8 @@ public final class LinePane extends AnchorPane {
 
 	public LinePane() {
 		this.isClicked = new SimpleBooleanProperty(false);
+		this.setOnMousePressed(event -> this.isClicked.set(true));
+		this.setOnMouseReleased(event -> this.isClicked.set(false));
 
 		Pane timingBar = this.createBar(TIMING_BAR_SIZE);
 		timingBar.setStyle("-fx-background-color: #000000aa;");
@@ -30,16 +37,18 @@ public final class LinePane extends AnchorPane {
 				() -> this.computeFingerPos(this.isClicked.get()), this.isClicked, this.heightProperty());
 		fingerBar.translateYProperty().bind(binding);
 		this.getChildren().add(fingerBar);
-
-
-		this.setOnMousePressed(event -> this.isClicked.set(true));
-		this.setOnMouseReleased(event -> this.isClicked.set(false));
-		//		CountUpTask task = new CountUpTask(1000, 1, 10);
-		//		this.timingBar.translateYProperty().bind(task.progressProperty().multiply(this.heightProperty().multiply(0.8)));
-		//		Executor executor = Executors.newSingleThreadExecutor();
-		//		executor.execute(task);
+		
+		Pane hoge = this.createBar(10);
+		hoge.setStyle("-fx-background-color: blue;");
+		DoubleProperty property = new SimpleDoubleProperty();
+		hoge.translateYProperty().bind(property);
+		
+		CountUpTask task = new CountUpTask(10, 10);
+		task.getTargetList().add(property);
+		Executor executor = Executors.newSingleThreadExecutor();
+		executor.execute(task);
 	}
-	
+
 	private final double computeFingerPos(boolean isClicked) {
 		if (!isClicked) {
 			return FINGER_BAR_DEFAULT_POSITION_RATE * this.getHeight();

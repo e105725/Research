@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import library.FXMLControl;
+import app.UIManager;
 
 public final class MainPane extends FXMLControl {
 	private static final URL URL = MainPane.class.getResource("MainPane.fxml");
@@ -20,18 +21,8 @@ public final class MainPane extends FXMLControl {
 	
 	public MainPane() {
 		super(URL);
-//		GridPaneHelper.initConstraints(this, LINE_COUNT, 1);
-//		this.setGridLinesVisible(true);
-//		for (int index = 0; index < LINE_COUNT; index++) {
-//			LinePane linePane = new LinePane();
-//			this.add(linePane, index, 0);
-//		}
-//		
-//		CountUpTask task = new CountUpTask(1000, 1, 10);
-//		this.timingBar.translateYProperty().bind(task.progressProperty().multiply(this.heightProperty().multiply(0.8)));
-//		Executor executor = Executors.newSingleThreadExecutor();
-//		executor.execute(task);
-//		DataManager.frameProperty().addListener(
-//				(observable, oldValue, newValue) -> this.hoge(newValue));
+		
+		this.startButton.setOnAction(event -> UIManager.setState(true));
+		this.stopButton.setOnAction(event -> UIManager.setState(false));
 	}
 }

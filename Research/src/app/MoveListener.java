@@ -6,10 +6,10 @@ import com.leapmotion.leap.Controller;
 import com.leapmotion.leap.Frame;
 import com.leapmotion.leap.Listener;
 
-public final class MoveListener extends Listener {
+final class MoveListener extends Listener {
 	private final ObjectProperty<Frame> frame;
 	
-	public MoveListener(ObjectProperty<Frame> _frame) {
+	MoveListener(ObjectProperty<Frame> _frame) {
 		this.frame = _frame;
 	}
 

@@ -1,8 +1,5 @@
 package app.line;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.BooleanProperty;
@@ -42,11 +39,6 @@ public final class LinePane extends AnchorPane {
 		hoge.setStyle("-fx-background-color: blue;");
 		DoubleProperty property = new SimpleDoubleProperty();
 		hoge.translateYProperty().bind(property);
-		
-		CountUpTask task = new CountUpTask(10, 10);
-		task.getTargetList().add(property);
-		Executor executor = Executors.newSingleThreadExecutor();
-		executor.execute(task);
 	}
 
 	private final double computeFingerPos(boolean isClicked) {

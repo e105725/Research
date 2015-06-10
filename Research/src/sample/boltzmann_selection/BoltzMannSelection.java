@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Random;
 
 public final class BoltzMannSelection {
+	private BoltzMannSelection() {}
+	
 	//どの行動を行うかを確率的に選ぶ際に利用する
 		private static final Random random = new Random(System.currentTimeMillis());
 	

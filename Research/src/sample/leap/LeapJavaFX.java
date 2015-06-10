@@ -1,4 +1,4 @@
-package sample;
+package sample.leap;
 
 import java.util.stream.IntStream;
 

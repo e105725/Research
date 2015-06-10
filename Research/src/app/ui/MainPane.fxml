@@ -24,20 +24,12 @@
                   <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label text="Clear Notes" GridPane.rowIndex="1" />
-                  <Label text="All Notes" />
-                  <Label text=":" GridPane.columnIndex="1" />
-                  <Label text=":" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label fx:id="denominatorLabel" text="0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                     <graphic>
-                        <Label text="/">
-                           <graphic>
-                              <Label fx:id="numeratorLabel" text="0" />
-                           </graphic>
-                        </Label>
-                     </graphic>
-                  </Label>
-                  <Label text="0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                  <Label text="Score" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                  <Label text="Note Count" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label text=":" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label text=":" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                  <Label fx:id="noteCountLabel" text="0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label fx:id="scoreLabel" text="0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
                </children>
             </GridPane>
             <Button fx:id="startButton" mnemonicParsing="false" text="Start" />

@@ -6,23 +6,41 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import library.AnchorPaneHelper;
 import library.FXMLControl;
+import library.GridPaneHelper;
+import app.DataManager;
 import app.UIManager;
+import app.ui.content.LinePane;
 
 public final class MainPane extends FXMLControl {
 	private static final URL URL = MainPane.class.getResource("MainPane.fxml");
-	private static final int LINE_COUNT = 4;
 
 	@FXML private AnchorPane contentBase;
 	@FXML private Button startButton;
 	@FXML private Button stopButton;
-	@FXML private Label numeratorLabel;
-	@FXML private Label denominatorLabel;
-	
+	@FXML private Label noteCountLabel;
+	@FXML private Label scoreLabel;
+
 	public MainPane() {
 		super(URL);
-		
-		this.startButton.setOnAction(event -> UIManager.setState(true));
-		this.stopButton.setOnAction(event -> UIManager.setState(false));
+
+		this.startButton.setOnAction(
+				event -> UIManager.setState(true));
+
+		this.stopButton.setOnAction(
+				event -> UIManager.setState(false));
+
+		GridPane gridPane = new GridPane();
+		gridPane.setGridLinesVisible(true);
+		GridPaneHelper.initConstraints(gridPane, UIManager.LINE_COUNT, 1);
+		for (int index = 0; index < UIManager.LINE_COUNT; index++) {
+			gridPane.add(new LinePane(), index, 0);
+		}
+		AnchorPaneHelper.fitToAnchorPane(gridPane, this.contentBase);
+
+		this.noteCountLabel.textProperty().bind(DataManager.noteCountProperty().asString());
+		this.scoreLabel.textProperty().bind(DataManager.scoreProperty().asString());
 	}
 }

@@ -1,8 +1,9 @@
-package q_learning;
+package sample.q_learning_2d;
+
+import java.awt.Point;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.geometry.Point3D;
 
 public final class Model {
 	private final DoubleProperty positionX;
@@ -43,20 +44,11 @@ public final class Model {
 		this.positionZ.set(z);
 	}
 
-	public final void move(Point3D action) {
-		double xPos = this.positionX.get() + action.getX();
+	public final void move(Point selectedAction) {
+		double xPos = this.positionX.get() + selectedAction.x;
+		double yPos = this.positionY.get() + selectedAction.y;
+		
 		this.positionX.set(xPos);
-		
-		double yPos = this.positionY.get() + action.getY();
 		this.positionY.set(yPos);
-		
-		double zPos = this.positionZ.get() + action.getZ();
-		this.positionZ.set(zPos);
-	}
-
-	public final void setPosition(double x, double y, double z) {
-		this.setPositionX(x);
-		this.setPositionY(y);
-		this.setPositionZ(z);
 	}
 }

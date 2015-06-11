@@ -1,25 +1,30 @@
 package q_learning;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.geometry.Point3D;
+
 public final class ActionList {
-	private final List<Point> list;
+	private static final int MAX_DISTANCE = 3;
+	private final List<Point3D> list;
 	
 	public ActionList() {
 		this.list = new ArrayList<>();
-		this.list.add(new Point(0, 1));
-		this.list.add(new Point(0, -1));
-		this.list.add(new Point(1, 0));
-		this.list.add(new Point(-1, 0));
+		for (int x = 0; x < MAX_DISTANCE; x++) {
+			for (int y = 0; y < MAX_DISTANCE; y++) {
+				for (int z = 0; z < MAX_DISTANCE; z++) {
+					this.list.add(new Point3D(x, y, z));
+				}
+			}
+		}
 	}
 	
 	public final int size() {
 		return this.list.size();
 	}
 	
-	public final Point getAction(int index) {
+	public final Point3D getAction(int index) {
 		return this.list.get(index);
 	}
 }

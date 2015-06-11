@@ -1,6 +1,4 @@
-package q_learning;
-
-import javafx.geometry.Point3D;
+package sample.q_learning_2d;
 
 public final class RewardFunction {
 	public RewardFunction() {}
@@ -16,9 +14,8 @@ public final class RewardFunction {
 		return 1;
 	}
 	
-	public final double getReward(double x, double y, double z) {
-		Point3D goal = QLeaning.goal;
-		if (x == goal.getX() && y == goal.getY() && z == goal.getZ()) {
+	public final double getReward(double x, double y) {
+		if (x == Main.goal.x && y == Main.goal.y) {
 			return 1;
 		}
 		return 0;

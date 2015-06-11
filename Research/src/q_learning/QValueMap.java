@@ -32,8 +32,8 @@ public final class QValueMap {
 		int nextX = positionX + action.x;
 		int nextY = positionY + action.y;
 		
-		boolean modelXPosIsValid = 0 <= nextX && nextX < 10;
-		boolean modelYPosIsValid = 0 <= nextY && nextY < 10;
+		boolean modelXPosIsValid = 0 <= nextX && nextX < Main.AREA_WIDTH;
+		boolean modelYPosIsValid = 0 <= nextY && nextY < Main.AREA_HEIGHT;
 		if (!modelYPosIsValid || !modelXPosIsValid) {
 			this.qValues[positionX][positionY][actionIndex] = -1;
 			return;

@@ -15,7 +15,7 @@ public final class RewardFunction {
 	}
 	
 	public final double getReward(double x, double y) {
-		if (x == 9.0 && y == 9.0) {
+		if (x == Main.goal.x && y == Main.goal.y) {
 			return 1;
 		}
 		return 0;

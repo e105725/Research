@@ -1,7 +1,10 @@
-package app.ui;
+package sample.leap.ui;
 
 import java.net.URL;
 
+import sample.leap.DataManager;
+import sample.leap.UIManager;
+import sample.leap.ui.content.LinePane;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -10,9 +13,6 @@ import javafx.scene.layout.GridPane;
 import library.AnchorPaneHelper;
 import library.FXMLControl;
 import library.GridPaneHelper;
-import app.DataManager;
-import app.UIManager;
-import app.ui.content.LinePane;
 
 public final class MainPane extends FXMLControl {
 	private static final URL URL = MainPane.class.getResource("MainPane.fxml");

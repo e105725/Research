@@ -1,4 +1,4 @@
-package app;
+package sample.leap;
 
 import javafx.beans.property.ObjectProperty;
 

@@ -6,10 +6,10 @@ import java.util.Random;
 
 public final class BoltzMannSelection {
 	private BoltzMannSelection() {}
-	
+
 	//どの行動を行うかを確率的に選ぶ際に利用する
-		private static final Random random = new Random(System.currentTimeMillis());
-	
+	private static final Random random = new Random(System.currentTimeMillis());
+
 	//Q値のListとTの値を引数として、List内の何番目の行動を行うかを返す。
 	public static final int select(List<Double> qValueList, double t) {
 		List<Double> probabilityList = calculateProbability(qValueList, t);
@@ -19,12 +19,12 @@ public final class BoltzMannSelection {
 		for (int index = 0; index < probabilityList.size(); index++) {
 			double probability = probabilityList.get(index);
 
-			//Infinityが混ざってきたら、q値が一番高い行動を返すようにする
+			//Infinityが混ざってきたら、十分にtが小さくなっているのでq値が一番高い行動を返すようにする
 			if (!Double.isFinite(probability)) {
-				int hoge = maxQValueIndex(qValueList);
-				System.out.println(hoge);
-				return hoge;
+				int maxQValueIndex = maxQValueIndex(qValueList);
+				return maxQValueIndex;
 			}
+
 			probabilitySum += probability;
 			if (randomValue < probabilitySum) {
 				return index;
@@ -32,13 +32,13 @@ public final class BoltzMannSelection {
 		}
 		throw new UnsupportedOperationException();
 	}
-	
+
 	private static final int maxQValueIndex(List<Double> qValueList) {
 		double max = -Double.MAX_VALUE;
 		int maxIndex = -1;
 		for (int index = 0; index < qValueList.size(); index++) {
 			double qValue = qValueList.get(index);
-			
+
 			if (max < qValue) {
 				max = qValue;
 				maxIndex = index;
@@ -53,7 +53,7 @@ public final class BoltzMannSelection {
 		}
 		return maxIndex;
 	}
-	
+
 	//Q値のListとTの値から、各行動の確率を返す
 	private static final List<Double> calculateProbability(List<Double> qValueList, double t) {
 		if (qValueList == null || qValueList.isEmpty()) {
@@ -65,20 +65,24 @@ public final class BoltzMannSelection {
 		double denominator = calculateDenominator(qValueList, t);
 		for (double qValue : qValueList) {
 			double numerator = Math.exp(qValue / t);
+
+			//denominator、numeratorが十分に大きくなっていたらInfinityに設定
+			//Infinity / Infinity = 0になるのでその処置。
+			if(Double.isInfinite(denominator) ||Double.isInfinite(numerator)) {
+				probabilityList.add(Double.POSITIVE_INFINITY);
+				continue;
+			}
 			double probability = numerator / denominator;
 			probabilityList.add(probability);
 		}
 		return probabilityList;
 	}
-	
+
 	//ボルツマン選択の分母の計算
 	private static final double calculateDenominator(List<Double> qValueList, double t) {
 		double denominator = 0;
 		for (double qValue : qValueList) {
 			double value = Math.exp(qValue / t);
-			if (Double.isInfinite(value)) {
-				value = Double.MIN_VALUE;
-			}
 			denominator += value;
 		}
 		return denominator;

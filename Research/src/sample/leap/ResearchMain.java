@@ -1,9 +1,9 @@
-package app;
+package sample.leap;
 
+import sample.leap.ui.MainPane;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import app.ui.MainPane;
 
 public final class ResearchMain extends Application {
 	private static final double WIDTH = 720;

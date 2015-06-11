@@ -1,4 +1,4 @@
-package app;
+package sample.leap;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package app.ui.content;
+package sample.leap.ui.content;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import sample.leap.UIManager;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -13,7 +14,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import app.UIManager;
 
 public final class LinePane extends AnchorPane {
 	private static final double TIMING_BAR_SIZE = 50;

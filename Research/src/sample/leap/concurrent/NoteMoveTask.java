@@ -1,12 +1,12 @@
-package app.concurrent;
+package sample.leap.concurrent;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import sample.leap.UIManager;
 import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-import app.UIManager;
 
 //List内のノーツを動かすタスク
 public final class NoteMoveTask extends Task<Void> {

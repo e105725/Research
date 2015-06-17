@@ -1,7 +1,8 @@
-package sample.q_learning_2d;
+package q_learning_hierarchical;
 
-final class RewardFunction {
-	RewardFunction() {}
+final class LowClassRewardFunction {
+	
+	LowClassRewardFunction() {}
 	
 	final double getReward(Model model) {
 		boolean xPosIsClear = model.getPositionX() == 100;

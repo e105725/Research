@@ -1,4 +1,4 @@
-package q_learning;
+package sample.q_learning_3d;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;

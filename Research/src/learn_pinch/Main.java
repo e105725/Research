@@ -46,11 +46,12 @@ public final class Main extends Application {
 			@Override
 			protected Void call() throws Exception {
 				qLearn.start();
+				Platform.runLater(() -> primaryStage.close());
 				return null;
 			}
 		};
 		ExecutorService service = Executors.newSingleThreadExecutor();
-		service.submit(task);
+		service.execute(task);
 	}
 	
 	private final void changePosition(Circle circle, double angle) {		

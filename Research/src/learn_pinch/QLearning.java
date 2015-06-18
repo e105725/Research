@@ -60,13 +60,12 @@ public final class QLearning {
 			//モデルの初期化
 			model.reset();
 
-
 			if (tryCount % (TRY_MAX / 100) == 0) {
 				System.out.println("進捗率 = " + tryCount / (double)TRY_MAX);
 			}
 			for (int stepCount = 0; stepCount < STEP_MAX; stepCount++) {
 				try {
-					Thread.sleep(10);
+					Thread.sleep(0);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -138,7 +137,7 @@ public final class QLearning {
 		if (this.isGoal(model)) {
 			return 1;
 		}
-		return 1 / (double)(Math.abs((model.getIndexFingerAngle() - model.getThumbFingerAngle())) / INTERVAL);
+		return 1 / (double)(Math.abs((model.getIndexFingerAngle() - model.getThumbFingerAngle())));
 	}
 
 	//関節可動範囲かどうか
@@ -153,7 +152,7 @@ public final class QLearning {
 	//終了条件を満たしているかどうか
 	private final boolean isGoal(Model model) {
 		double distance = Math.abs(model.getIndexFingerAngle() - model.getThumbFingerAngle());
-		if (distance < 0.1) {
+		if (distance < 0.5) {
 			return true;
 		}
 		return false;

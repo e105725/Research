@@ -6,15 +6,15 @@ import java.util.List;
 import sample.boltzmann_selection.BoltzMannSelection;
 
 public final class QLearning {
-	public static void main(String[] args) {
-		QLearning ql =new QLearning();
-		ql.start();
-	}
+	//	public static void main(String[] args) {
+	//		QLearning ql =new QLearning();
+	//		ql.start();
+	//	}
 
 	//試行回数
 	private static final int TRY_MAX = 10000;
 	//1試行あたりの最大行動回数
-	private static final int STEP_MAX = 100;
+	private static final int STEP_MAX = 1000;
 	//割引率
 	private static final double DISCOUNT = 0.8;
 	//学習率
@@ -34,7 +34,10 @@ public final class QLearning {
 	//BoltzMannSelectionで使うtの初期値。試行を繰り返すごとに減少
 	private static final double T_DEFAULT = 1;
 
+	private final Model model;
+
 	QLearning() {
+		this.model = new Model();
 		//		ActionList actionList = new ActionList(MAX_VARIATION, INTERVAL);
 		//		QValueMap qValueMap = new QValueMap(INDEX_FINGER_MAX_ANGLE, INDEX_FINGER_MIN_ANGLE, INTERVAL, actionList);
 	}
@@ -46,7 +49,7 @@ public final class QLearning {
 		QValueMap qValueMap = new QValueMap(INDEX_FINGER_MAX_ANGLE, INDEX_FINGER_MIN_ANGLE, INTERVAL, actionList);
 
 		//モデルの初期化
-		Model model = new Model();
+		//Model model = new Model();
 
 		//温度tの初期化と、減衰する数の準備
 		double t = T_DEFAULT;
@@ -56,12 +59,17 @@ public final class QLearning {
 		for (int tryCount = 0; tryCount < TRY_MAX; tryCount++) {
 			//モデルの初期化
 			model.reset();
-			
-			
+
+
 			if (tryCount % (TRY_MAX / 100) == 0) {
 				System.out.println("進捗率 = " + tryCount / (double)TRY_MAX);
 			}
 			for (int stepCount = 0; stepCount < STEP_MAX; stepCount++) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				//行動決定
 				List<Double> qValueList = new ArrayList<>();
 				double nowIndexFingerAngle = model.getIndexFingerAngle();
@@ -77,10 +85,12 @@ public final class QLearning {
 				//行動実行
 				double nextIndexFingerAngle = model.getIndexFingerAngle() + action.getIndexFingerAngleVariation();
 				double nextThumbFingerAngle = model.getThumbFingerAngle() + action.getThumbFingerAngleVariation();
+
 				model.setIndexFingerAngle(nextIndexFingerAngle);
 				model.setThumbFingerAngle(nextThumbFingerAngle);
+
 				double nextDistance = Math.abs(nextIndexFingerAngle - nextThumbFingerAngle);
-				
+
 				int nextStateIndex = (int)(nextDistance / INTERVAL);
 				if (!this.isValidFingerAngle(model)) {
 					qValueMap.updateQValue(nowStateIndex, actionIndex, -1);
@@ -99,12 +109,10 @@ public final class QLearning {
 				double reward = this.computeReward(model);
 				//次に新しいq値の計算
 				double oldQValue = qValueMap.getQValue(nowStateIndex, actionIndex);
-				double nextQValue = oldQValue + STUDY * 
+				double nextMaxQValue = oldQValue + STUDY * 
 						(reward + DISCOUNT * qValueMap.searchMaxQValue(nextStateIndex) - oldQValue);
 				//最後にq値のマップを更新
-				qValueMap.updateQValue(nowStateIndex, actionIndex, nextQValue);
-
-				//終了判定
+				qValueMap.updateQValue(nowStateIndex, actionIndex, nextMaxQValue);
 			}
 			//tを減衰
 			t -= decrementValue;
@@ -112,12 +120,12 @@ public final class QLearning {
 		System.out.println("Fin");
 		for (int index = 0; index < 900; index++) {
 			//for (int actionIndex = 0; actionIndex < actionList.size(); actionIndex++) {
-				//double qValue = qValueMap.getQValue(index, actionIndex);
-				double qValue = qValueMap.searchMaxQValue(index);
-				if (qValue != 0.01) {
-					System.out.println("Distance = " + index * INTERVAL);
-					System.out.println("q = " + qValue);
-				}
+			//double qValue = qValueMap.getQValue(index, actionIndex);
+			double qValue = qValueMap.searchMaxQValue(index);
+			//if (qValue != 0.01) {
+			System.out.println("Distance = " + index * INTERVAL);
+			System.out.println("q = " + qValue);
+			//}
 			//}
 		}
 	}
@@ -130,7 +138,7 @@ public final class QLearning {
 		if (this.isGoal(model)) {
 			return 1;
 		}
-		return 1 / (Math.abs((model.getIndexFingerAngle() - model.getThumbFingerAngle()))) * 100;
+		return 1 / (double)(Math.abs((model.getIndexFingerAngle() - model.getThumbFingerAngle())) / INTERVAL);
 	}
 
 	//関節可動範囲かどうか
@@ -149,5 +157,9 @@ public final class QLearning {
 			return true;
 		}
 		return false;
+	}
+
+	final Model getModel() {
+		return this.model;
 	}
 }

@@ -14,7 +14,7 @@ public final class QLearning {
 	//試行回数
 	private static final int TRY_MAX = 10000;
 	//1試行あたりの最大行動回数
-	private static final int STEP_MAX = 10000;
+	private static final int STEP_MAX = 100;
 	//割引率
 	private static final double DISCOUNT = 0.8;
 	//学習率
@@ -56,7 +56,11 @@ public final class QLearning {
 		for (int tryCount = 0; tryCount < TRY_MAX; tryCount++) {
 			//モデルの初期化
 			model.reset();
-
+			
+			
+			if (tryCount % (TRY_MAX / 100) == 0) {
+				System.out.println("進捗率 = " + tryCount / (double)TRY_MAX);
+			}
 			for (int stepCount = 0; stepCount < STEP_MAX; stepCount++) {
 				//行動決定
 				List<Double> qValueList = new ArrayList<>();
@@ -85,7 +89,7 @@ public final class QLearning {
 
 				if (this.isGoal(model)) {
 					System.out.println("goal");
-					System.out.println(nextDistance);
+					//System.out.println(nextDistance);
 					qValueMap.updateQValue(nowStateIndex, actionIndex, 1);
 					break;
 				}
@@ -105,15 +109,16 @@ public final class QLearning {
 			//tを減衰
 			t -= decrementValue;
 		}
+		System.out.println("Fin");
 		for (int index = 0; index < 900; index++) {
-			for (int actionIndex = 0; actionIndex < actionList.size(); actionIndex++) {
-				double qValue = qValueMap.getQValue(index, actionIndex);
-				if (false) {
-				//if (qValue != 0.01) {
+			//for (int actionIndex = 0; actionIndex < actionList.size(); actionIndex++) {
+				//double qValue = qValueMap.getQValue(index, actionIndex);
+				double qValue = qValueMap.searchMaxQValue(index);
+				if (qValue != 0.01) {
 					System.out.println("Distance = " + index * INTERVAL);
 					System.out.println("q = " + qValue);
 				}
-			}
+			//}
 		}
 	}
 
@@ -125,7 +130,7 @@ public final class QLearning {
 		if (this.isGoal(model)) {
 			return 1;
 		}
-		return 1 / Math.abs((model.getIndexFingerAngle() - model.getThumbFingerAngle()));
+		return 1 / (Math.abs((model.getIndexFingerAngle() - model.getThumbFingerAngle()))) * 100;
 	}
 
 	//関節可動範囲かどうか

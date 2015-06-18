@@ -106,14 +106,14 @@ public final class QLearning {
 			t -= decrementValue;
 		}
 		for (int index = 0; index < 900; index++) {
-			for (int actionIndex = 0; actionIndex < actionList.size(); actionIndex++) {
-				double qValue = qValueMap.getQValue(index, actionIndex);
-				if (false) {
-				//if (qValue != 0.01) {
+			//for (int actionIndex = 0; actionIndex < actionList.size(); actionIndex++) {
+				double qValue = qValueMap.searchMaxQValue(index);
+				
+				if (qValue != 0.01) {
 					System.out.println("Distance = " + index * INTERVAL);
 					System.out.println("q = " + qValue);
 				}
-			}
+			//}
 		}
 	}
 

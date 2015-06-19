@@ -1,4 +1,4 @@
-package learn_pinch;
+package sample.learn_pinch_2line;
 
 import java.util.ArrayList;
 import java.util.List;

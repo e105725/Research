@@ -1,4 +1,4 @@
-package learn_pinch;
+package sample.learn_pinch_2line;
 
 final class ActionList {
 	private final Action[] actions;

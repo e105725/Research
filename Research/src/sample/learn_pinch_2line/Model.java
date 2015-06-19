@@ -1,4 +1,4 @@
-package learn_pinch;
+package sample.learn_pinch_2line;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;

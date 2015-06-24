@@ -58,7 +58,7 @@ public final class QLearning {
 		//今回はx座標は合わせてあるのでyだけ
 		double maxDistance = INDEX_FINGER_LENGTH + THUMB_FINGER_LENGTH + defaultYDistance + 100;
 		int stateCount = (int)(maxDistance / DISTANCE_INTERVAL) + 1;
-		int variationCount = (int)((MAX_VARIATION / ANGLE_INTERVAL) * 2) + 1;
+		//int variationCount = (int)((MAX_VARIATION / ANGLE_INTERVAL) * 2) + 1;
 		QValueMap qValueMap = new QValueMap(stateCount, actionList.size());
 
 		//温度tの初期化と、減衰する数の準備

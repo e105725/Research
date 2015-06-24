@@ -24,6 +24,7 @@ public final class Main extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		Pane pane = new Pane();
 		Circle base = new Circle(3, Color.BLACK);
+		
 		Circle index1 = new Circle(3, Color.BLUE);
 		Circle index2 = new Circle(3, Color.YELLOW);
 		Circle index3 = new Circle(3, Color.GREEN);

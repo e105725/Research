@@ -12,7 +12,7 @@ public final class QLearning {
 		ql.start(0);
 	}
 	//試行回数
-	private static final int TRY_MAX = 10000;
+	private static final int TRY_MAX = 1000;
 	//1試行あたりの最大行動回数
 	private static final int STEP_MAX = 1000;
 	//割引率
@@ -20,9 +20,9 @@ public final class QLearning {
 	//学習率
 	private static final double STUDY = 0.5;
 	//関節が一回でどの程度の角度を動かせるか
-	private static final double MAX_VARIATION = 10;
+	private static final double MAX_VARIATION = 5;
 	//関節角の刻み幅
-	private static final double ANGLE_INTERVAL = 5;
+	private static final double ANGLE_INTERVAL = 1;
 	private static final double DISTANCE_INTERVAL = 0.1;
 	//BoltzMannSelectionで使うtの初期値。試行を繰り返すごとに減少
 	private static final double T_DEFAULT = 1;
@@ -43,7 +43,8 @@ public final class QLearning {
 
 	void start(long sleep) {
 		//一つの関節が取りうるアクションの数。正負の方向に動けるので倍どん
-		int singleJointActionCount = (int)(MAX_VARIATION / ANGLE_INTERVAL) * 2;
+		int singleJointActionCount = (int)((MAX_VARIATION / (double)ANGLE_INTERVAL) * 2) + 1;
+		System.out.println(singleJointActionCount);
 		int allActionCount = (int)Math.pow(singleJointActionCount, DOF);
 				
 		//必要なのはMAXの距離
@@ -106,7 +107,6 @@ public final class QLearning {
 					qValueList.add(qValue);
 				}
 				int actionIndex = BoltzMannSelection.select(qValueList, t);
-				
 				//アクションの計算
 				int indexJoint1Action = actionIndex / a;
 				int hogeA = a * indexJoint1Action;
@@ -116,14 +116,14 @@ public final class QLearning {
 				int hogeC = c * indexJoint3Action;
 				int thumbJoint1Action = (actionIndex - hogeA - hogeB - hogeC) / d;
 				int hogeD = d * thumbJoint1Action;
-				int thumbJoint2Action = (actionIndex - hogeA - hogeB - hogeC - hogeD); 
+				int thumbJoint2Action = (actionIndex - hogeA - hogeB - hogeC - hogeD);
 				//行動実行
-				double nextIndex1 = (nowIndex1 + -MAX_VARIATION + ANGLE_INTERVAL * indexJoint1Action) % 360.0;
-				double nextIndex2 = (nowIndex2 + -MAX_VARIATION + ANGLE_INTERVAL * indexJoint2Action) % 360.0;
-				double nextIndex3 = (nowIndex3 + -MAX_VARIATION + ANGLE_INTERVAL * indexJoint3Action) % 360.0;
-				double nextThumb1 = (nowThumb1 + -MAX_VARIATION + ANGLE_INTERVAL * thumbJoint1Action) % 360.0;
-				double nextThumb2 = (nowThumb2 + -MAX_VARIATION + ANGLE_INTERVAL * thumbJoint2Action) % 360.0;
-				
+				double nextIndex1 = (nowIndex1 + -MAX_VARIATION + ANGLE_INTERVAL * indexJoint1Action);
+				double nextIndex2 = (nowIndex2 + -MAX_VARIATION + ANGLE_INTERVAL * indexJoint2Action);
+				double nextIndex3 = (nowIndex3 + -MAX_VARIATION + ANGLE_INTERVAL * indexJoint3Action);
+				double nextThumb1 = (nowThumb1 + -MAX_VARIATION + ANGLE_INTERVAL * thumbJoint1Action);
+				double nextThumb2 = (nowThumb2 + -MAX_VARIATION + ANGLE_INTERVAL * thumbJoint2Action);
+		//		System.out.println(-MAX_VARIATION + ANGLE_INTERVAL * indexJoint3Action);
 				this.model.indexFinger.firstJointBendAngle.set(nextIndex1);
 				this.model.indexFinger.secondJointBendAngle.set(nextIndex2);
 				this.model.indexFinger.lastJointBendAngle.set(nextIndex3);

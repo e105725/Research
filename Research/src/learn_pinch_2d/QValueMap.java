@@ -10,6 +10,8 @@ final class QValueMap {
 	
 	QValueMap(double maxDistance, double interval, ActionList actionList) {
 		int stateCount = (int)(maxDistance / interval) + 1;
+		System.out.println(actionList.size());
+		System.out.println(stateCount);
 		this.qValueMap = new double[stateCount][actionList.size()];
 		for (int index = 0; index < stateCount; index++) {
 			Arrays.fill(this.qValueMap[index], DEFAULT_QVALUE);

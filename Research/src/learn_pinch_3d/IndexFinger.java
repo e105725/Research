@@ -4,7 +4,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
 
 final class IndexFinger {	
 	final DoubleProperty firstJointAdductionAngle;
@@ -12,10 +12,10 @@ final class IndexFinger {
 	final DoubleProperty secondJointBendAngle;
 	final DoubleProperty lastJointBendAngle;
 	
-	final ObjectProperty<Point2D> firstJointPos;
-	final ObjectProperty<Point2D> secondJointPos;
-	final ObjectProperty<Point2D> lastJointPos;
-	final ObjectProperty<Point2D> tipPos;
+	final ObjectProperty<Point3D> firstJointPos;
+	final ObjectProperty<Point3D> secondJointPos;
+	final ObjectProperty<Point3D> lastJointPos;
+	final ObjectProperty<Point3D> tipPos;
 
 	IndexFinger() {
 		this.firstJointAdductionAngle = new SimpleDoubleProperty();

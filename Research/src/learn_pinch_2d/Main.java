@@ -24,6 +24,7 @@ public final class Main extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		Pane pane = new Pane();
 		Circle base = new Circle(3, Color.BLACK);
+		
 		Circle index1 = new Circle(3, Color.BLUE);
 		Circle index2 = new Circle(3, Color.YELLOW);
 		Circle index3 = new Circle(3, Color.GREEN);
@@ -51,20 +52,20 @@ public final class Main extends Application {
 
 		QLearning qLearn = new QLearning();
 		Hand model = qLearn.getModel();
-		model.getIndexFingerJointList().get(0).position.addListener(
+		model.indexFinger.firstJointPos.addListener(
 				(a, b, c) -> this.changePos(index1, c));
-		model.getIndexFingerJointList().get(1).position.addListener(
+		model.indexFinger.secondJointPos.addListener(
 				(a, b, c) -> this.changePos(index2, c));
-		model.getIndexFingerJointList().get(2).position.addListener(
+		model.indexFinger.lastJointPos.addListener(
 				(a, b, c) -> this.changePos(index3, c));
-		model.indexTickPos.addListener(
+		model.indexFinger.tipPos.addListener(
 				(a, b, c) -> this.changePos(indexTick, c));
 
-		model.getThumbFingerJointList().get(0).position.addListener(
+		model.thumbFinger.firstJointPos.addListener(
 				(a, b, c) -> this.changePos(thumb1, c));
-		model.getThumbFingerJointList().get(1).position.addListener(
+		model.thumbFinger.lastJointPos.addListener(
 				(a, b, c) -> this.changePos(thumb2, c));
-		model.thumbTickPos.addListener(
+		model.thumbFinger.tipPos.addListener(
 				(a, b, c) -> this.changePos(thumbTick, c));
 
 		Task<Void> task = new Task<Void>() {

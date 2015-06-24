@@ -15,17 +15,18 @@ public final class QLearning {
 		ql.start(0);
 	}
 	//試行回数
-	private static final int TRY_MAX = 1000000;
+	private static final int TRY_MAX = 10000;
 	//1試行あたりの最大行動回数
-	private static final int STEP_MAX = 100;
+	private static final int STEP_MAX = 1000;
 	//割引率
 	private static final double DISCOUNT = 0.8;
 	//学習率
 	private static final double STUDY = 0.5;
 	//関節が一回でどの程度動かせるか
-	private static final double MAX_VARIATION = 5;
+	private static final double MAX_VARIATION = 4;
 	//関節角の刻み幅
-	private static final double INTERVAL = 1;
+	private static final double ANGLE_INTERVAL = 1;
+	private static final double DISTANCE_INTERVAL = 0.1;
 	//BoltzMannSelectionで使うtの初期値。試行を繰り返すごとに減少
 	private static final double T_DEFAULT = 1;
 
@@ -44,14 +45,14 @@ public final class QLearning {
 	}
 
 	void start(long sleep) {
-		ActionList actionList = new ActionList(MAX_VARIATION, INTERVAL);
+		ActionList actionList = new ActionList(MAX_VARIATION, ANGLE_INTERVAL);
 
 		//必要なのはMAXの距離
 		//double defaultXDistance = Math.abs(INDEX_FINGER_BASE_DEFAULT_POS.x - THUMB_FINGER_BASE_DEFAULT_POS.x);
 		double defaultYDistance = Math.abs(INDEX_FINGER_BASE_POS.getY() - THUMB_FINGER_BASE_POS.getY());
 		//今回はx座標は合わせてあるのでyだけ
 		double maxDistance = INDEX_FINGER_LENGTH + THUMB_FINGER_LENGTH + defaultYDistance;
-		QValueMap qValueMap = new QValueMap(maxDistance, INTERVAL, actionList);
+		QValueMap qValueMap = new QValueMap(maxDistance, DISTANCE_INTERVAL, actionList);
 
 		//温度tの初期化と、減衰する数の準備
 		double t = T_DEFAULT;
@@ -92,7 +93,7 @@ public final class QLearning {
 				double nowYDistance = Math.abs(nowIndexTickPos.getY() - nowThumbTickPos.getY());
 				//親指と人差指の先端位置を計算して距離を測る
 				double nowDistance = Math.sqrt(Math.pow(nowXDistance, 2) + Math.pow(nowYDistance, 2));
-				int nowStateIndex = (int)(nowDistance / INTERVAL);
+				int nowStateIndex = (int)(nowDistance / ANGLE_INTERVAL);
 				for (int actionIndex = 0; actionIndex < actionList.size(); actionIndex++) {
 					qValueList.add(qValueMap.getQValue(nowStateIndex, actionIndex));
 				}
@@ -133,7 +134,7 @@ public final class QLearning {
 				//親指と人差指の先端位置を計算して距離を測る
 				double nextDistance = Math.sqrt(Math.pow(nextXDistance, 2) + Math.pow(nextYDistance, 2));	
 
-				int nextStateIndex = (int)(nextDistance / INTERVAL);
+				int nextStateIndex = (int)(nextDistance / ANGLE_INTERVAL);
 				if (!this.isValidFingerAngle(model)) {
 					qValueMap.updateQValue(nowStateIndex, actionIndex, -1);
 					break;
@@ -171,8 +172,8 @@ public final class QLearning {
 		
 		Platform.runLater(() -> {
 			String allText = "";
-			for (int index = 0; index < (int)(maxDistance / INTERVAL) + 1; index++) {
-				String distance = "Distance = " + index * INTERVAL;
+			for (int index = 0; index < (int)(maxDistance / ANGLE_INTERVAL) + 1; index++) {
+				String distance = "Distance = " + index * ANGLE_INTERVAL;
 				
 				String qValue = "QValue = " + qValueMap.searchMaxQValue(index);
 				allText = allText.concat((distance + "\n" + qValue + "\n"));

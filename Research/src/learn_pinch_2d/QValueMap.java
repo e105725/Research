@@ -8,14 +8,20 @@ final class QValueMap {
 	//2本の指の間の角度差とaction
 	private final double[][] qValueMap;
 	
-	QValueMap(double maxDistance, double interval, ActionList actionList) {
+	QValueMap(double maxDistance, double interval, int allActionCount) {
 		int stateCount = (int)(maxDistance / interval) + 1;
-		this.qValueMap = new double[stateCount][actionList.size()];
+		this.qValueMap = new double[stateCount][allActionCount];
 		for (int index = 0; index < stateCount; index++) {
 			Arrays.fill(this.qValueMap[index], DEFAULT_QVALUE);
 		}
 	}
+	
+	//状態sにおける各行動のQ値の配列を返す
+	final double[] getQValues(int stateIndex) {
+		return this.qValueMap[stateIndex];
+	}
 
+	//状態sにおける行動aのQ値を返す
 	final double getQValue(int stateIndex, int actionIndex) {
 		return this.qValueMap[stateIndex][actionIndex];
 	}

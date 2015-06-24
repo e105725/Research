@@ -4,33 +4,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
 import sample.boltzmann_selection.BoltzMannSelection;
 
 public final class QLearning {
 	//試行回数
 	private static final int TRY_MAX = 10000;
 	//1試行あたりの最大行動回数
-	private static final int STEP_MAX = 1000;
+	private static final int STEP_MAX = 100;
 	//割引率
 	private static final double DISCOUNT = 0.8;
 	//学習率
 	private static final double STUDY = 0.5;
+	
 	//関節が一回でどの程度動かせるか
 	private static final double MAX_VARIATION = 5;
 	//関節角の刻み幅
 	private static final double ANGLE_INTERVAL = 1;
+	//距離の刻み幅
 	private static final double DISTANCE_INTERVAL = 0.1;
 	//BoltzMannSelectionで使うtの初期値。試行を繰り返すごとに減少
 	private static final double T_DEFAULT = 1;
 
-	//指の長さの設定
-	static final Point2D INDEX_FINGER_BASE_POS = new Point2D(250, 200);
-	static final Point2D THUMB_FINGER_BASE_POS = new Point2D(200, 250);
+	//指の長さとか位置
+	static final Point3D PALM_BASE_POS = new Point3D(250, 250, 0);
+	static final Point3D INDEX_FINGER_BASE_POS = new Point3D(250, 200, 0);
+	static final Point3D THUMB_FINGER_BASE_POS = new Point3D(200, 250, 0);
 	private static final double INDEX_FINGER_LENGTH = 150;
 	private static final double THUMB_FINGER_LENGTH = 100;
-	private static final double MIN_ANGLE = 0;
-	private static final double MAX_ANGLE = 90;
-
+	private static final double MIN_BEND_ANGLE = 0;
+	private static final double MAX_BEND_ANGLE = 90;
+	private static final double MIN_ADDICTION_ANGEL = -45;
+	private static final double MAX_ADDICTION_ANGEL = 45;
+	
 	private final Hand model;
 	QLearning() {
 		//モデルの初期化
@@ -38,13 +44,15 @@ public final class QLearning {
 	}
 
 	void start() {
-		ActionList actionList = new ActionList(MAX_VARIATION, ANGLE_INTERVAL);
-
+		//アクションは、人差し指第三関節の内外転 + 曲がり + 第二関節の曲がり + 第一関節の曲がり
+		//+ 親指第二関節の内外転 + 曲がり + 第一関節の曲がりの7自由度
+		
+		
 		//必要なのはMAXの距離
 		//double defaultXDistance = Math.abs(INDEX_FINGER_BASE_DEFAULT_POS.x - THUMB_FINGER_BASE_DEFAULT_POS.x);
 		double defaultYDistance = Math.abs(INDEX_FINGER_BASE_POS.getY() - THUMB_FINGER_BASE_POS.getY());
 		//今回はx座標は合わせてあるのでyだけ
-		double maxDistance = INDEX_FINGER_LENGTH + THUMB_FINGER_LENGTH + defaultYDistance;
+		double maxDistance = INDEX_FINGER_LENGTH + THUMB_FINGER_LENGTH + defaultYDistance + 100;
 		QValueMap qValueMap = new QValueMap(maxDistance, DISTANCE_INTERVAL, actionList);
 
 		//温度tの初期化と、減衰する数の準備

@@ -14,7 +14,7 @@ public final class QLearning {
 	//試行回数
 	private static final int TRY_MAX = 1000;
 	//1試行あたりの最大行動回数
-	private static final int STEP_MAX = 1000;
+	private static final int STEP_MAX = 100;
 	//割引率
 	private static final double DISCOUNT = 0.8;
 	//学習率
@@ -23,7 +23,7 @@ public final class QLearning {
 	private static final double MAX_VARIATION = 5;
 	//関節角の刻み幅
 	private static final double ANGLE_INTERVAL = 1;
-	private static final double DISTANCE_INTERVAL = 0.1;
+	private static final double DISTANCE_INTERVAL = 1;
 	//BoltzMannSelectionで使うtの初期値。試行を繰り返すごとに減少
 	private static final double T_DEFAULT = 1;
 	//自由度。今回は5になる
@@ -51,7 +51,7 @@ public final class QLearning {
 		//double defaultXDistance = Math.abs(INDEX_FINGER_BASE_DEFAULT_POS.x - THUMB_FINGER_BASE_DEFAULT_POS.x);
 		double defaultYDistance = Math.abs(INDEX_FINGER_BASE_POS.getY() - THUMB_FINGER_BASE_POS.getY());
 		//今回はx座標は合わせてあるのでyだけ
-		double maxDistance = INDEX_FINGER_LENGTH + THUMB_FINGER_LENGTH + defaultYDistance;
+		double maxDistance = INDEX_FINGER_LENGTH + THUMB_FINGER_LENGTH + defaultYDistance + 100;
 		QValueMap qValueMap = new QValueMap(maxDistance, DISTANCE_INTERVAL, allActionCount);
 
 		//温度tの初期化と、減衰する数の準備
@@ -150,7 +150,6 @@ public final class QLearning {
 				double nextYDistance = Math.abs(nextIndexTickPos.getY() - nextThumbTickPos.getY());
 				//親指と人差指の先端位置を計算して距離を測る
 				double nextDistance = Math.sqrt(Math.pow(nextXDistance, 2) + Math.pow(nextYDistance, 2));	
-
 				int nextStateIndex = (int)(nextDistance / ANGLE_INTERVAL);
 				
 				if (this.isGoal(nextDistance)) {

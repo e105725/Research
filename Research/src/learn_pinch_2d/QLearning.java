@@ -15,17 +15,17 @@ public final class QLearning {
 		ql.start(0);
 	}
 	//試行回数
-	private static final int TRY_MAX = 10000;
+	private static final int TRY_MAX = 1000000;
 	//1試行あたりの最大行動回数
-	private static final int STEP_MAX = 10000;
+	private static final int STEP_MAX = 100;
 	//割引率
 	private static final double DISCOUNT = 0.8;
 	//学習率
 	private static final double STUDY = 0.5;
 	//関節が一回でどの程度動かせるか
-	private static final double MAX_VARIATION = 5;
+	private static final double MAX_VARIATION = 10;
 	//関節角の刻み幅
-	private static final double INTERVAL = 1;
+	private static final double INTERVAL = 5;
 	//BoltzMannSelectionで使うtの初期値。試行を繰り返すごとに減少
 	private static final double T_DEFAULT = 1;
 

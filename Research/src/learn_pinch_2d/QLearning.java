@@ -44,6 +44,7 @@ public final class QLearning {
 	void start(long sleep) {
 		//一つの関節が取りうるアクションの数。正負の方向に動けるので倍どん
 		int singleJointActionCount = (int)((MAX_VARIATION / (double)ANGLE_INTERVAL) * 2) + 1;
+		System.out.println(singleJointActionCount);
 		int allActionCount = (int)Math.pow(singleJointActionCount, DOF);
 		
 		System.out.println(allActionCount);

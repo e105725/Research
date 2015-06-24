@@ -20,10 +20,10 @@ public final class QLearning {
 	//学習率
 	private static final double STUDY = 0.5;
 	//関節が一回でどの程度の角度を動かせるか
-	private static final double MAX_VARIATION = 5;
+	private static final double MAX_VARIATION = 4;
 	//関節角の刻み幅
 	private static final double ANGLE_INTERVAL = 1;
-	private static final double DISTANCE_INTERVAL = 1;
+	private static final double DISTANCE_INTERVAL = 0.1;
 	//BoltzMannSelectionで使うtの初期値。試行を繰り返すごとに減少
 	private static final double T_DEFAULT = 1;
 	//自由度。今回は5になる
@@ -44,9 +44,9 @@ public final class QLearning {
 	void start(long sleep) {
 		//一つの関節が取りうるアクションの数。正負の方向に動けるので倍どん
 		int singleJointActionCount = (int)((MAX_VARIATION / (double)ANGLE_INTERVAL) * 2) + 1;
-		System.out.println(singleJointActionCount);
 		int allActionCount = (int)Math.pow(singleJointActionCount, DOF);
-				
+		
+		System.out.println(allActionCount);
 		//必要なのはMAXの距離
 		//double defaultXDistance = Math.abs(INDEX_FINGER_BASE_DEFAULT_POS.x - THUMB_FINGER_BASE_DEFAULT_POS.x);
 		double defaultYDistance = Math.abs(INDEX_FINGER_BASE_POS.getY() - THUMB_FINGER_BASE_POS.getY());

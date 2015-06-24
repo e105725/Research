@@ -15,9 +15,9 @@ public final class QLearning {
 		ql.start(0);
 	}
 	//試行回数
-	private static final int TRY_MAX = 100000;
+	private static final int TRY_MAX = 10000;
 	//1試行あたりの最大行動回数
-	private static final int STEP_MAX = 100;
+	private static final int STEP_MAX = 10000;
 	//割引率
 	private static final double DISCOUNT = 0.8;
 	//学習率
@@ -63,7 +63,7 @@ public final class QLearning {
 			this.model.reset();
 
 			if (tryCount % (TRY_MAX / 100) == 0) {
-				System.out.println("進捗率 = " + tryCount / (double)TRY_MAX);
+				System.out.println("進捗率 = " + (int)(((tryCount / (double)TRY_MAX) * 100) + 0.5) + "%");
 			}
 			for (int stepCount = 0; stepCount < STEP_MAX; stepCount++) {
 				try {

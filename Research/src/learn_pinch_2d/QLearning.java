@@ -23,9 +23,9 @@ public final class QLearning {
 	//学習率
 	private static final double STUDY = 0.5;
 	//関節が一回でどの程度動かせるか
-	private static final double MAX_VARIATION = 10;
+	private static final double MAX_VARIATION = 5;
 	//関節角の刻み幅
-	private static final double INTERVAL = 5;
+	private static final double INTERVAL = 1;
 	//BoltzMannSelectionで使うtの初期値。試行を繰り返すごとに減少
 	private static final double T_DEFAULT = 1;
 

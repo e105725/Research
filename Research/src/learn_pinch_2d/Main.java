@@ -70,7 +70,7 @@ public final class Main extends Application {
 		Task<Void> task = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
-				qLearn.start();
+				qLearn.start(20);
 				Platform.runLater(() -> primaryStage.close());
 				return null;
 			}

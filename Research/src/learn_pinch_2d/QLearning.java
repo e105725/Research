@@ -3,14 +3,21 @@ package learn_pinch_2d;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.geometry.Point2D;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import sample.boltzmann_selection.BoltzMannSelection;
 
 public final class QLearning {
+	public static void main(String[] args) {
+		QLearning ql = new QLearning();
+		ql.start(0);
+	}
 	//試行回数
-	private static final int TRY_MAX = 10000;
+	private static final int TRY_MAX = 100000;
 	//1試行あたりの最大行動回数
-	private static final int STEP_MAX = 1000;
+	private static final int STEP_MAX = 100;
 	//割引率
 	private static final double DISCOUNT = 0.8;
 	//学習率
@@ -36,7 +43,7 @@ public final class QLearning {
 		this.model = new Hand();
 	}
 
-	void start() {
+	void start(long sleep) {
 		ActionList actionList = new ActionList(MAX_VARIATION, INTERVAL);
 
 		//必要なのはMAXの距離
@@ -60,7 +67,7 @@ public final class QLearning {
 			}
 			for (int stepCount = 0; stepCount < STEP_MAX; stepCount++) {
 				try {
-					Thread.sleep(20);
+					Thread.sleep(sleep);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -161,6 +168,19 @@ public final class QLearning {
 			t -= decrementValue;
 		}
 		System.out.println("Fin");
+		
+		Platform.runLater(() -> {
+			String allText = "";
+			for (int index = 0; index < (int)(maxDistance / INTERVAL) + 1; index++) {
+				String distance = "Distance = " + index * INTERVAL;
+				
+				String qValue = "QValue = " + qValueMap.searchMaxQValue(index);
+				allText = allText.concat((distance + "\n" + qValue + "\n"));
+			}
+			ClipboardContent content = new ClipboardContent();
+			content.putString(allText);
+			Clipboard.getSystemClipboard().setContent(content);
+		});
 	}
 	
 	private final Point2D computePos(Point2D basePos, double baseAngle, double angle) {
@@ -196,7 +216,7 @@ public final class QLearning {
 
 	//終了条件を満たしているかどうか
 	private final boolean isGoal(double distance) {
-		return distance < 3;
+		return distance < 5;
 	}
 
 	final Hand getModel() {

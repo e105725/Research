@@ -5,7 +5,7 @@ final class ActionList {
 
 	ActionList(double maxVariation, double interval) {
 		//actionsの初期化
-		int angleVariationCount = (int)(maxVariation * 2 / interval) + 1;
+		int angleVariationCount = (int)((maxVariation / interval) * 2) + 1;
 		int arrayLength = (int)Math.pow(angleVariationCount, 5);
 		this.actions = new Action[arrayLength];
 		int index = 0;

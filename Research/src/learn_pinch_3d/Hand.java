@@ -10,6 +10,7 @@ import javafx.geometry.Point2D;
 //手のモデル
 //ただ持ってるのは人差し指と親指のjointだけ
 final class Hand {
+	
 	final ObjectProperty<Point2D> indexTickPos;
 	private final List<Joint> indexFingerJointList;
 	final ObjectProperty<Point2D> thumbTickPos;

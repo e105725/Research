@@ -12,7 +12,7 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Sphere;
 import javafx.stage.Stage;
 
-public class Test extends Application{
+final class PositionComputer extends Application{
 
 	public static void main(String[] args) {
 		launch(args);
@@ -32,20 +32,19 @@ public class Test extends Application{
 		base.setTranslateZ(basePos.getZ());
 		pane.getChildren().add(base);
 		
-		Point3D nextPos = computeNextPosition(50, new Point3D(0, 0, 0), new Point2D(0,0));
+		Point3D nextPos = computeNextPosition(basePos, 50, new Point3D(0, 0, 0), new Point2D(0,0));
 		System.out.println(nextPos);
 		
 //		Point3D rotateX = this.rotateX(new Point3D(0, 50, 0), 45);
 //		Point3D rotateZ = this.rotateZ(rotateX, 45);
 		//Point3D nextPos = this.rotateY(rotateZ, 45);
-		Point3D nexthoge = new Point3D(basePos.getX() + nextPos.getX(), basePos.getY() + nextPos.getY(), basePos.getZ() + nextPos.getZ());
 		Sphere next = new Sphere();
 		next.setMaterial(new PhongMaterial(Color.RED));
-		System.out.println(nexthoge);
+		System.out.println(nextPos);
 		next.setRadius(5);
-		next.setLayoutX(nexthoge.getX());
-		next.setLayoutY(nexthoge.getY());
-		next.setTranslateZ(nexthoge.getZ());
+		next.setLayoutX(nextPos.getX());
+		next.setLayoutY(nextPos.getY());
+		next.setTranslateZ(nextPos.getZ());
 		pane.getChildren().add(next);
 		pane.setRotate(180);
 		Camera camera = new PerspectiveCamera();
@@ -57,7 +56,7 @@ public class Test extends Application{
 		primaryStage.show();
 	}
 	
-	private final Point3D computeNextPosition(double r, Point3D baseAngle, Point2D angle) {
+	static final Point3D computeNextPosition(Point3D basePos, double r, Point3D baseAngle, Point2D angle) {
 		double phi = baseAngle.getX() / 180.0 * Math.PI;
 		double theta = baseAngle.getZ() / 180.0 * Math.PI;
 		double nextY = r * Math.cos(theta) * Math.cos(phi);
@@ -65,12 +64,13 @@ public class Test extends Application{
 		double nextX = r * Math.sin(theta);
 		
 		Point3D tempPos = new Point3D(nextX, nextY, nextZ);
-		Point3D rotateX = this.rotateX(tempPos, angle.getX());
-		Point3D rotateZ = this.rotateZ(rotateX, angle.getY());
-		return rotateZ;
+		Point3D rotateX = rotateX(tempPos, angle.getX());
+		Point3D rotateZ = rotateZ(rotateX, angle.getY());
+		Point3D nextPosition = new Point3D(basePos.getX() - rotateZ.getX(), basePos.getY() - rotateZ.getY(), basePos.getZ() + rotateZ.getZ());
+		return nextPosition;
 	}
 	
-	private final Point3D rotateX(Point3D point, double angle) {
+	private static final Point3D rotateX(Point3D point, double angle) {
 		double theta = angle / 180.0 * Math.PI;
 		double x = point.getX();
 		double y = point.getY() * Math.cos(theta) + point.getZ() * -Math.sin(theta);
@@ -78,7 +78,7 @@ public class Test extends Application{
 		return new Point3D(x, y, z);
 	}
 	
-	private final Point3D rotateY(Point3D point, double angle) {
+	private static final Point3D rotateY(Point3D point, double angle) {
 		double theta = angle / 180.0 * Math.PI;
 		double x = point.getX() * Math.cos(theta) + point.getZ() * Math.sin(theta);
 		double y = point.getY();
@@ -86,7 +86,7 @@ public class Test extends Application{
 		return new Point3D(x, y, z);
 	}
 	
-	private final Point3D rotateZ(Point3D point, double angle) {
+	private static final Point3D rotateZ(Point3D point, double angle) {
 		double theta = angle / 180.0 * Math.PI;
 		double x = point.getX() * Math.cos(theta) - point.getY() * Math.sin(theta);
 		double y = point.getX() * Math.sin(theta) + point.getY() * Math.cos(theta);

@@ -3,23 +3,27 @@ package learn_pinch_3d;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.application.Platform;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import sample.boltzmann_selection.BoltzMannSelection;
 
 public final class QLearning {
 	//試行回数
-	private static final int TRY_MAX = 10000;
+	private static final int TRY_MAX = 1000000;
 	//1試行あたりの最大行動回数
-	private static final int STEP_MAX = 100;
+	private static final int STEP_MAX = 1000;
 	//割引率
 	private static final double DISCOUNT = 0.8;
 	//学習率
 	private static final double STUDY = 0.5;
-	
+
 	//関節が一回でどの程度動かせるか
-	private static final double MAX_VARIATION = 5;
+	private static final double MAX_VARIATION = 15;
 	//関節角の刻み幅
-	private static final double ANGLE_INTERVAL = 5;
+	private static final double ANGLE_INTERVAL = 15;
 	//距離の刻み幅
 	private static final double DISTANCE_INTERVAL = 0.1;
 	//BoltzMannSelectionで使うtの初期値。試行を繰り返すごとに減少
@@ -33,11 +37,11 @@ public final class QLearning {
 	private static final double THUMB_FINGER_LENGTH = 100;
 	private static final double MIN_BEND_ANGLE = 0;
 	private static final double MAX_BEND_ANGLE = 90;
-	private static final double MIN_ADDICTION_ANGEL = -45;
-	private static final double MAX_ADDICTION_ANGEL = 45;
-	
+	private static final double MIN_ADDICTION_ANGEL = -20;
+	private static final double MAX_ADDICTION_ANGLE = 20;
+
 	private final Hand model;
-	
+
 	public static void main(String[] args) {
 		QLearning ql = new QLearning();
 		ql.start((long)0);
@@ -50,7 +54,6 @@ public final class QLearning {
 	void start(Long sleep) {
 		//アクションは、人差し指第三関節の内外転 + 曲がり + 第二関節の曲がり + 第一関節の曲がり
 		//+ 親指第二関節の内外転 + 曲がり + 第一関節の曲がりの7自由度
-		
 		ActionList actionList = new ActionList(MAX_VARIATION, ANGLE_INTERVAL);
 		//必要なのはMAXの距離
 		//double defaultXDistance = Math.abs(INDEX_FINGER_BASE_DEFAULT_POS.x - THUMB_FINGER_BASE_DEFAULT_POS.x);
@@ -90,21 +93,21 @@ public final class QLearning {
 				double nowThumb2 = this.model.thumbFinger.lastJointBendAngle.get();
 
 				Point3D nowIndex1Pos = INDEX_FINGER_BASE_POS;
-				Point3D nowIndex2Pos = this.computePos(nowIndex1Pos, 90, nowIndex1);
-				Point3D nowIndex3Pos = this.computePos(nowIndex2Pos, nowIndex1, nowIndex2);
-				Point3D nowIndexTickPos = this.computePos(nowIndex3Pos, nowIndex2, nowIndex3);
-				
+				Point3D nowIndex2Pos = PositionComputer.computeNextPosition(nowIndex1Pos, 50, new Point3D(0, 0, 0), new Point2D(nowIndexAdduction, -nowIndex1));
+				Point3D nowIndex3Pos = PositionComputer.computeNextPosition(nowIndex2Pos, 50, new Point3D(nowIndexAdduction, 0, nowIndex1), new Point2D(0, -nowIndex2));
+				Point3D nowIndexTickPos = PositionComputer.computeNextPosition(nowIndex3Pos, 50, new Point3D(nowIndexAdduction, 0, nowIndex1 + nowIndex2), new Point2D(0, -nowIndex3));
+
 				Point3D nowThumb1Pos = THUMB_FINGER_BASE_POS;
-				Point3D nowThumb2Pos = this.computePos(nowThumb1Pos, 180, nowThumb1);
-				Point3D nowThumbTickPos = this.computePos(nowThumb2Pos, nowThumb1, nowThumb2);
-				
+				Point3D nowThumb2Pos = PositionComputer.computeNextPosition(nowThumb1Pos, 50, new Point3D(0, 0, 90), new Point2D(nowThumbAdduction, nowThumb1));
+				Point3D nowThumbTickPos = PositionComputer.computeNextPosition(nowThumb2Pos, 50, new Point3D(nowThumbAdduction, 0, 90 - nowThumb1), new Point2D(0, nowThumb2));
+
 				double nowXDistance = Math.abs(nowIndexTickPos.getX() - nowThumbTickPos.getX());
 				double nowYDistance = Math.abs(nowIndexTickPos.getY() - nowThumbTickPos.getY());
 				double nowZDistance = Math.abs(nowIndexTickPos.getZ() - nowThumbTickPos.getZ());
 				//親指と人差指の先端位置を計算して距離を測る
 				double nowDistance = Math.sqrt(Math.pow(nowXDistance, 2) + Math.pow(nowYDistance, 2) + Math.pow(nowZDistance, 2));
 				int nowStateIndex = (int)(nowDistance / DISTANCE_INTERVAL);
-				
+
 				for (int actionIndex = 0; actionIndex < actionList.size(); actionIndex++) {
 					qValueList.add(qValueMap.getQValue(nowStateIndex, actionIndex));
 				}
@@ -119,7 +122,6 @@ public final class QLearning {
 				double nextThumbAdduction = nowThumbAdduction + action.thumbJoint1Adduction;
 				double nextThumb1 = nowThumb1 + action.thumbJoint1;
 				double nextThumb2 = nowThumb2 + action.thumbJoint2;
-
 				this.model.indexFinger.firstJointAdductionAngle.set(nextIndexAdduction);
 				this.model.indexFinger.firstJointBendAngle.set(nextIndex1);
 				this.model.indexFinger.secondJointBendAngle.set(nextIndex2);
@@ -127,23 +129,25 @@ public final class QLearning {
 				this.model.thumbFinger.secondJointAdductionAngle.set(nextThumbAdduction);
 				this.model.thumbFinger.secondJointBendAngle.set(nextThumb1);
 				this.model.thumbFinger.lastJointBendAngle.set(nextThumb2);
-				
+
 				Point3D nextIndex1Pos = INDEX_FINGER_BASE_POS;
 				this.model.indexFinger.firstJointPos.set(nextIndex1Pos);
-				Point3D nextIndex2Pos = this.computePos(nextIndex1Pos, 90, nextIndex1);
+				Point3D nextIndex2Pos = PositionComputer.computeNextPosition(nextIndex1Pos, 50, new Point3D(0, 0, 0), new Point2D(nextIndexAdduction, -nextIndex1));
 				this.model.indexFinger.secondJointPos.set(nextIndex2Pos);
-				Point3D nextIndex3Pos = this.computePos(nextIndex2Pos, 90 + nextIndex1, nextIndex2);
+				Point3D nextIndex3Pos = PositionComputer.computeNextPosition(nextIndex2Pos, 50, new Point3D(nextIndexAdduction, 0, nextIndex1), new Point2D(0, -nextIndex2));
 				this.model.indexFinger.lastJointPos.set(nextIndex3Pos);
-				Point3D nextIndexTickPos = this.computePos(nextIndex3Pos, 90 + nextIndex1 + nextIndex2, nextIndex3);
+				Point3D nextIndexTickPos = PositionComputer.computeNextPosition(nextIndex3Pos, 50, new Point3D(nextIndexAdduction, 0, nextIndex1 + nextIndex2), new Point2D(0, -nextIndex3));
 				this.model.indexFinger.tipPos.set(nextIndexTickPos);
-				
+
 				Point3D nextThumb1Pos = THUMB_FINGER_BASE_POS;
 				this.model.thumbFinger.secondJointPos.set(nextThumb1Pos);
-				Point3D nextThumb2Pos = this.computePos(nextThumb1Pos, 180, -nextThumb1);
+				Point3D nextThumb2Pos = PositionComputer.computeNextPosition(nextThumb1Pos, 50, new Point3D(0, 0, 90), new Point2D(nextThumbAdduction, nextThumb1));
+				//Point3D nextThumb2Pos = PositionComputer.computeNextPosition(nextThumb1Pos, 50, new Point3D(0, 0, 90), new Point2D(nextThumbAdduction, 90));
 				this.model.thumbFinger.lastJointPos.set(nextThumb2Pos);
-				Point3D nextThumbTickPos = this.computePos(nextThumb2Pos, 180 - nextThumb1, -nextThumb2);
+				Point3D nextThumbTickPos = PositionComputer.computeNextPosition(nextThumb2Pos, 50, new Point3D(nextThumbAdduction, 0, 90 - nextThumb1), new Point2D(0, nextThumb2));
+				//Point3D nextThumbTickPos = PositionComputer.computeNextPosition(nextThumb2Pos, 50, new Point3D(nextThumbAdduction, 0, 90 - 90), new Point2D(0, 10));
+
 				this.model.thumbFinger.tipPos.set(nextThumbTickPos);
-				
 				double nextXDistance = Math.abs(nextIndexTickPos.getX() - nextThumbTickPos.getX());
 				double nextYDistance = Math.abs(nextIndexTickPos.getY() - nextThumbTickPos.getY());
 				double nextZDistance = Math.abs(nextIndexTickPos.getZ() - nextThumbTickPos.getZ());
@@ -167,13 +171,8 @@ public final class QLearning {
 				double reward = this.computeReward(nextDistance);
 				if (nextDistance < minDistance) {
 					minDistance = nextDistance;
-//					System.out.println("nextIndexPos =" + nextIndexTickPos);
-//					System.out.println("nextThumbPos =" + nextThumbTickPos);
-//					System.out.println("nextDistance = " + nextDistance);
-//					System.out.println("reward = " + reward);
-					
 				}
-				
+
 				//次に新しいq値の計算
 				double oldQValue = qValueMap.getQValue(nowStateIndex, actionIndex);
 				double nextMaxQValue = oldQValue + STUDY * 
@@ -185,17 +184,29 @@ public final class QLearning {
 			t -= decrementValue;
 		}
 		System.out.println("Fin");
-	}
-	
-	private final Point3D computePos(Point3D basePos, double baseAngle, double angle) {
-		double length = 50;
-		double actualAngle = baseAngle + angle;
-		
-		double lengthX = Math.cos(Math.PI * actualAngle / 180.0) * length;
-		double lengthY = Math.sin(Math.PI * actualAngle / 180.0) * length;
-		
-		Point3D pos = new Point3D(basePos.getX() + lengthX, basePos.getY() - lengthY, 0);
-		return pos;
+		Platform.runLater(() -> {
+			String allText = "";
+			for (int index = 0; index < (int)(maxDistance / DISTANCE_INTERVAL) + 1; index++) {
+				String distance = "Distance = " + index * DISTANCE_INTERVAL;
+				double maxQValue = -Double.MAX_VALUE;
+				int maxIndex = 0;
+				double[] qValues = qValueMap.getQValues(index);
+				for (int actionIndex = 0; actionIndex < actionList.size(); actionIndex++) {
+					double qValue = qValues[actionIndex];
+					if (maxQValue < qValue) {
+						maxQValue = qValue;
+						maxIndex = actionIndex;
+					}
+				}
+				String qValue = "QValue = " + maxQValue;
+				String action = "action = " + actionList.get(maxIndex).toString();
+				allText = allText.concat((distance + "\n" + qValue + "\n" + action + "\n"));
+			}
+			ClipboardContent content = new ClipboardContent();
+			content.putString(allText);
+			Clipboard.getSystemClipboard().setContent(content);
+		});
+
 	}
 
 	//報酬の計算
@@ -206,16 +217,16 @@ public final class QLearning {
 	//関節可動範囲かどうか.今回は全関節 0 ~ 90とする
 	private final boolean isValidFingerAngle(Hand model) {
 		double index1Adduction = this.model.indexFinger.firstJointAdductionAngle.get();
-		boolean a = MIN_ADDICTION_ANGEL <= index1Adduction && index1Adduction <= MAX_ADDICTION_ANGEL;
+		boolean a = MIN_BEND_ANGLE <= index1Adduction && index1Adduction <= MAX_BEND_ANGLE;
 		double index1 = this.model.indexFinger.firstJointBendAngle.get();
 		boolean b = MIN_BEND_ANGLE <= index1 && index1 <= MAX_BEND_ANGLE;
 		double index2 = this.model.indexFinger.secondJointBendAngle.get();
 		boolean c = MIN_BEND_ANGLE <= index2 && index2 <= MAX_BEND_ANGLE;
 		double index3 = this.model.indexFinger.lastJointBendAngle.get();
 		boolean d = MIN_BEND_ANGLE <= index3 && index3 <= MAX_BEND_ANGLE;
-		
+
 		double thumb1Adduction = this.model.thumbFinger.secondJointAdductionAngle.get();
-		boolean e = MIN_ADDICTION_ANGEL <= thumb1Adduction && thumb1Adduction <= MAX_ADDICTION_ANGEL;
+		boolean e = MIN_BEND_ANGLE <= thumb1Adduction && thumb1Adduction <= MAX_BEND_ANGLE;
 		double thumb1 = this.model.thumbFinger.secondJointBendAngle.get();;
 		boolean f = MIN_BEND_ANGLE <= thumb1 && thumb1 <= MAX_BEND_ANGLE;
 		double thumb2 = this.model.thumbFinger.lastJointBendAngle.get();
@@ -225,7 +236,7 @@ public final class QLearning {
 
 	//終了条件を満たしているかどうか
 	private final boolean isGoal(double distance) {
-		return distance < 3;
+		return distance < 5;
 	}
 
 	final Hand getModel() {

@@ -6,10 +6,14 @@ import java.util.List;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
 
-//手のモデル
-//ただ持ってるのは人差し指と親指のjointだけ
+//手のモデル。ただし　親指と人差指だけで、操作できる関節はとりあえず根本1ヶ所
 final class Hand {
+	private static final Point3D BASE_POSITION = new Point3D(0, 0, 0);
+	private static final Point3D INDEX_FINGER_BASE_POSITION = new Point3D(0, 0, 0);
+	private static final Point3D THUMB_FINGER_BASE_POSITION = new Point3D(0, 0, 0);
+	
 	final ObjectProperty<Point2D> indexTickPos;
 	private final List<Joint> indexFingerJointList;
 	final ObjectProperty<Point2D> thumbTickPos;
@@ -34,15 +38,5 @@ final class Hand {
 	}
 
 	final void reset() {
-		this.indexFingerJointList.forEach(joint -> joint.reset());
-		this.thumbFingerJointList.forEach(joint -> joint.reset());
-	}
-	
-	final List<Joint> getIndexFingerJointList() {
-		return this.indexFingerJointList;
-	}
-	
-	final List<Joint> getThumbFingerJointList() {
-		return this.thumbFingerJointList;
 	}
 }
